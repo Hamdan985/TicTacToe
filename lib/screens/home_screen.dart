@@ -7,6 +7,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int no_of_ex_wins = 0;
+  int no_of_oh_wins = 0;
   bool exTurn = true;
   List<String> exOh = ['', '', '', '', '', '', '', '', ''];
   List<int> playedTiles = [];
@@ -20,10 +22,42 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Expanded(
+              flex: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      'Scoreboard',
+                      style: TextStyle(
+                        fontSize: 32.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text(
+                        'Player - X : $no_of_ex_wins',
+                        style: TextStyle(color: Colors.white, fontSize: 22.0),
+                      ),
+                      Text(
+                        'Player - X : $no_of_ex_wins',
+                        style: TextStyle(color: Colors.white, fontSize: 22.0),
+                      ),
+                    ],
+                  )
+                ],
+              )),
+          Expanded(
+            flex: 5,
             child: GridView.builder(
               itemCount: 9,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
+                childAspectRatio: 1.09,
               ),
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
@@ -46,6 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               },
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              color: Colors.redAccent[400],
             ),
           ),
         ],
