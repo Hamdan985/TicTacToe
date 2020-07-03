@@ -7,8 +7,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int no_of_ex_wins = 0;
-  int no_of_oh_wins = 0;
+  int numberOfExWins = 0;
+  int numberOfOhwins = 0;
+  int filledBoxes = 0;
   bool exTurn = true;
   List<String> exOh = ['', '', '', '', '', '', '', '', ''];
   List<int> playedTiles = [];
@@ -40,11 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       Text(
-                        'Player - X : $no_of_ex_wins',
+                        'Player - X : $numberOfExWins',
                         style: TextStyle(color: Colors.white, fontSize: 22.0),
                       ),
                       Text(
-                        'Player - X : $no_of_ex_wins',
+                        'Player - X : $numberOfOhwins',
                         style: TextStyle(color: Colors.white, fontSize: 22.0),
                       ),
                     ],
@@ -96,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _buttonPressed(int index) {
     setState(() {
       if (!playedTiles.contains(index)) {
+        filledBoxes += 1;
         if (exTurn) {
           exOh[index] = 'X';
           exTurn = !exTurn;
@@ -108,80 +110,104 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       playedTiles.add(index);
-      _checkForWinner();
+      _winnerContitions();
+      if (filledBoxes == 9) {
+        _showDrawAlert();
+      }
     });
   }
 
-  void _checkForWinner() {
-    if (_winnerContitions()) {
-      print('Check for winner condition');
-      showDialog<void>(
-          context: context,
-          barrierDismissible: false, // user must tap button!
-          builder: (BuildContext context) {
-            return AlertDialog(
-              elevation: 4.0,
-              title: Text('Congrats player X or O'),
-              content: SingleChildScrollView(
-                child: ListBody(
-                  children: <Widget>[
-                    Text('How about another match!!!'),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Replay?'),
-                  onPressed: _matchReset,
-                ),
-              ],
-            );
-          });
-    } else {
-      return;
-    }
-  }
-
-  bool _winnerContitions() {
+  void _winnerContitions() {
     //first row
     if (exOh[0] == exOh[1] && exOh[0] == exOh[2] && exOh[0] != '') {
-      return true;
+      _showWinnerDialog(exOh[0]);
     }
     //second row
     if (exOh[3] == exOh[4] && exOh[3] == exOh[5] && exOh[3] != '') {
-      return true;
+      _showWinnerDialog(exOh[3]);
     }
     //third row
     if (exOh[6] == exOh[7] && exOh[6] == exOh[8] && exOh[6] != '') {
-      return true;
+      _showWinnerDialog(exOh[6]);
     }
     //first column
     if (exOh[0] == exOh[3] && exOh[0] == exOh[6] && exOh[0] != '') {
-      return true;
+      _showWinnerDialog(exOh[0]);
     }
     //second column
     if (exOh[1] == exOh[4] && exOh[1] == exOh[7] && exOh[1] != '') {
-      return true;
+      _showWinnerDialog(exOh[1]);
     }
     //third column
     if (exOh[2] == exOh[5] && exOh[2] == exOh[8] && exOh[2] != '') {
-      return true;
+      _showWinnerDialog(exOh[2]);
     }
     // L to R diagonal
     if (exOh[0] == exOh[4] && exOh[0] == exOh[8] && exOh[0] != '') {
-      return true;
+      _showWinnerDialog(exOh[0]);
     }
     // R to L diagonal
     if (exOh[2] == exOh[4] && exOh[2] == exOh[6] && exOh[2] != '') {
-      return true;
-    } else {
-      return false;
+      _showWinnerDialog(exOh[2]);
     }
+  }
+
+  _showWinnerDialog(String winner) {
+    setState(() {
+      if (winner == 'X') {
+        numberOfExWins += 1;
+      } else {
+        numberOfOhwins += 1;
+      }
+    });
+    showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            elevation: 4.0,
+            title: Text('Winner is - $winner'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('How about another match!!!'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Replay'),
+                onPressed: _matchReset,
+              ),
+            ],
+          );
+        });
+  }
+
+  _showDrawAlert() {
+    showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('It\'s a Draw!'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: _matchReset,
+                child: Text('Replay'),
+              )
+            ],
+          );
+        });
   }
 
   void _matchReset() {
     setState(() {
-      exOh = ['', '', '', '', '', '', '', '', ''];
+      for (var i = 0; i < 9; i++) {
+        exOh[i] = '';
+      }
+      filledBoxes = 0;
+      playedTiles = [];
     });
     Navigator.of(context).pop();
   }
