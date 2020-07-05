@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:868936453681:android:47fd5e407cb74cc584cf10",
         "android_client_info": {
-          "package_name": "com.example.firestorecrudapp"
+          "package_name": "com.example.tictactoeapp"
         }
       },
       "oauth_client": [
